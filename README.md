@@ -3,7 +3,6 @@
 ## Installation
 
 ```bash
-git clone git@github.com:zungx/nodejs-api-starter.git
 cp .env.example .env
 yarn install
 node index.js
