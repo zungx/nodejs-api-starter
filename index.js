@@ -14,6 +14,7 @@ const app = express();
 
 (async () => {
   
+  // TODO change to use sequelize or some other orm
   await mysqlDB.init()
   await redisClient.connect();
 
