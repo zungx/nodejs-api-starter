@@ -8,6 +8,11 @@ yarn install
 node index.js
 ```
 
-## TODO 
+## Feature 
 - [ ] Integrate squelize
 - [ ] Implement unit test
+- [x] Project structure 
+- [x] Error handler
+- [x] Database connection Mysql / Redis
+- [x] Middleware validation / auth 
+- [x] Authentication feature Register / Login
