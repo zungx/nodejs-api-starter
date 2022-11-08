@@ -9,10 +9,13 @@ node index.js
 ```
 
 ## Feature 
-- [ ] Integrate squelize
+
 - [ ] Implement unit test
+- [ ] Add logger
+- [ ] Add squelize CLI migrations / seeder
+- [x] Integrate squelize
 - [x] Project structure 
-- [x] Error handler
+- [x] Error handler / Message
 - [x] Database connection Mysql / Redis
 - [x] Middleware validation / auth 
 - [x] Authentication feature Register / Login

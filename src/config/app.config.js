@@ -7,5 +7,7 @@ module.exports = {
   host: config.APP_HOST || 'localhost',
   jwtSecret: config.JWT_SECRET || '',
   accessTokenTTL: 365 * 24 * 60 * 60, // in second
-  refreshTokenTTL: 365 * 24 * 60 * 60 // in second
+  refreshTokenTTL: 365 * 24 * 60 * 60, // in second
+  logLevel: config.LOG_LEVEL || 'debug',
+  logFolder: config.LOG_FOLDER || 'logs',
 };

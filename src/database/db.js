@@ -1,88 +1,47 @@
-const mysql = require('mysql');
-const _ = require('lodash');
+const Sequelize = require('sequelize');
 const dbConfig = require('../config/database.config');
+const appConfig = require('../config/app.config');
 
-const connection = mysql.createConnection({
-  host: dbConfig.host,
-  user: dbConfig.username,
-  password: dbConfig.password,
-  database: dbConfig.database,
-  port: dbConfig.port
-});
+const client = new Sequelize(
+  dbConfig.database,
+  dbConfig.username,
+  dbConfig.password,
+  {
+    host: dbConfig.host,
+    port: dbConfig.port,
+    dialect: dbConfig.dialect,
+    define: {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci'
+    },
+    logging: appConfig.logLevel === 'debug'
+  }
+);
 
-class MysqlDB {
-  static get instance() {
-    return connection;
+class MasterDB {
+  static get sequelize() {
+    return client;
   }
 
   static async init() {
     return new Promise((resolve, reject) => {
-      connection.connect(error => {
-        if (error) reject(error);
-        console.log("Successfully connected to the database.");
-        resolve();
-      });
+      client
+        .authenticate()
+        .then(() => {
+          // TODO: Logger
+          console.log('Connection to MasterDB has been established successfully.')
+          resolve()
+        })
+        .catch((err) => {
+          console.log('Unable to connect to MasterDB:', err);
+          reject(err);
+        });
     });
   }
 
   static disconnect() {
-    connection.end();
-  }
-
-  static async selectAll(rawQuery) {
-    if (_.isNil(rawQuery)) {
-      throw Error('error query');
-    }
-    return new Promise((resolve, reject) => {
-      this.instance.query(rawQuery, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res);
-      });
-    });
-  }
-
-  static async selectRow(rawQuery) {
-    if (_.isNil(rawQuery)) {
-      throw Error('error query');
-    }
-    const query = `${rawQuery} LIMIT 1`;
-    return new Promise((resolve, reject) => {
-      this.instance.query(query, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res.length ? res[0] : null);
-      });
-    });
-  }
-
-  static async insert(rawQuery, data) {
-    return new Promise((resolve, reject) => {
-      this.instance.query(rawQuery, data, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res.insertId);
-      });
-    });
-  }
-
-  static async update(rawQuery, data) {
-    return new Promise((resolve, reject) => {
-      this.instance.query(rawQuery, data, (err, res) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res.affectedRows);
-      });
-    });
+    client.close();
   }
 }
 
-module.exports = MysqlDB;
+module.exports = MasterDB;

@@ -6,17 +6,18 @@ const i18n = require('./src/i18n');
 const { errorHandler } = require('./src/middleware');
 const { NotFoundError } = require('./src/errors');
 const { error } = require('./src/helpers/response.helper');
-const mysqlDB = require('./src/database/db');
+const MasterDB = require('./src/database/db');
 const redisClient = require('./src/database/redis');
+const { loadModels } = require('./src/models');
 
 
 const app = express();
 
 (async () => {
   
-  // TODO change to use sequelize or some other orm
-  await mysqlDB.init()
+  await MasterDB.init()
   await redisClient.connect();
+  loadModels();
 
   app.use(i18n.init);
   app.use(bodyParser.json());

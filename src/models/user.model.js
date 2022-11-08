@@ -1,14 +1,28 @@
-const db = require('../database/db');
+const BaseModel = require('./base-model');
 
-class User {
-    constructor(user) {
-        this.username = user.username;
-        this.password = user.password;
-    }
+class UserModel extends BaseModel {
+  static init(sequelize, DataTypes) {
+    console.log('initititiit');
+    return super.init({
+      username: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+    }, {
+      tableName: 'users',
+      paranoid: true,
+      timestamps: false,
+      underscored: true,
+      sequelize
+    });
+  }
+
+  static associate(models) {
+  }
 }
 
-User.create = (data) => db.insert('INSERT INTO users SET ?', data);
-User.findOne = (username) => db.selectRow(`SELECT * FROM users WHERE username = '${username}'`);
-User.findAll = () => db.selectAll(`SELECT * FROM users`);
-
-module.exports = User;
+module.exports = UserModel;

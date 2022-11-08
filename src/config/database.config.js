@@ -1,6 +1,7 @@
 const { parsed: config } = require('dotenv').config();
 
 module.exports = {
+  dialect: 'mysql',
   username: config.DB_USER || 'root',
   password: config.DB_PASS || '',
   database: config.DB_NAME || '',

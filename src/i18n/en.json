@@ -2,5 +2,9 @@
   "IS-0001": {
     "title": "IS-0001",
     "message": "error_is_0001"
+  },
+  "US-0401": {
+    "title": "demo title",
+    "message": "demo msg"
   }
 }

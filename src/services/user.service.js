@@ -4,32 +4,41 @@ const moment = require('moment');
 const { hashSync, genSaltSync, compareSync } = require('bcrypt');
 const { accessTokenTTL, refreshTokenTTL } = require('../config/app.config');
 const { generateJWTToken } = require('../helpers/jwt.helper');
-const User = require('../models/user.model');
+const UserModel = require('../models/user.model');
 const redisClient = require('../database/redis');
 const { authPrefix } = require('../config/redis.config');
-const db = require('../database/db');
 
 const register = async (params) => {
-  const user = await User.findOne(_.get(params, 'username'));
+  const user = await UserModel.findOne({
+    where: {
+      username: _.get(params, 'username')
+    }
+  });
+  
   if (user) {
     return false;
   }
 
-  const userId = await User.create({
+  const newUser = await UserModel.create({
     username: _.get(params, 'username'),
     password: hashSync(_.get(params, 'password'), genSaltSync(10)),
-    balance: 0,
-    created_at: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    created_at: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+    updated_at: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
   });
 
-  return userId;
+  return newUser.id;
 };
 
 const login = async (params) => {
   const username = _.get(params, 'username');
   const password = _.get(params, 'password');
 
-  const user = await User.findOne(username);
+  const user = await UserModel.findOne({
+    where: {
+      username
+    }
+  });
+
   if (!user) {
     return false;
   }
@@ -61,13 +70,8 @@ const login = async (params) => {
   };
 };
 
-const deposit = async (userId, amount) => {
-  const res = await db.update('UPDATE users SET balance = (balance + ?) WHERE id = ?', [amount, userId]);
-  return res;
-};
 
 module.exports = {
   register,
-  login,
-  deposit
+  login
 }
